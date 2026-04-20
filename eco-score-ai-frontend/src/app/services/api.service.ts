@@ -6,7 +6,9 @@ import { HttpClient } from '@angular/common/http';
 })
 export class ApiService {
 
-  private API_URL = 'https://eco-score-api-ytae.onrender.com/api';
+  private API_URL = window.location.hostname.includes("localhost")
+    ? 'http://localhost:3000/api'
+    : 'https://eco-score-api-ytae.onrender.com/api';
 
   constructor(private http: HttpClient) {}
 
