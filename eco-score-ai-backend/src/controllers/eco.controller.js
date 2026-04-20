@@ -14,22 +14,36 @@ const evaluate = async (req, res) => {
     const score = calcularEcoScore(data);
 
    let recomendaciones;
-    try {
-      const promiseIA = generarRecomendaciones(data, score);
-      const timeout = new Promise((_, reject) =>
-        setTimeout(() => reject(new Error("Timeout de IA")), 6000) // ⏳ Subimos a 6 segundos
-      );
 
-      recomendaciones = await Promise.race([promiseIA, timeout]);
-    } catch (e) {
-      console.log("🤖 IA falló o tardó demasiado, usando fallback dinámico");
-      // El fallback ya se maneja en ai.service.js, pero por seguridad:
-      recomendaciones = [
-        "Optimiza tu transporte diario",
-        "Evita plásticos de un solo uso",
-        "Apaga luces que no necesites"
-      ];
-    }
+if (score < 60) {
+  console.log("🧠 Usando IA (score bajo)");
+
+  try {
+    const promiseIA = generarRecomendaciones(data, score);
+    const timeout = new Promise((_, reject) =>
+      setTimeout(() => reject(new Error("Timeout de IA")), 6000)
+    );
+
+    recomendaciones = await Promise.race([promiseIA, timeout]);
+
+  } catch (e) {
+    console.log("🤖 IA falló, usando fallback");
+    recomendaciones = [
+      "Optimiza tu transporte diario",
+      "Evita plásticos de un solo uso",
+      "Apaga luces que no necesites"
+    ];
+  }
+
+} else {
+  console.log("⚡ Usando recomendaciones locales");
+
+  recomendaciones = [
+    "Mantén hábitos sostenibles",
+    "Reduce consumo innecesario",
+    "Promueve conciencia ambiental"
+  ];
+}
 
     // 🔥 Solana con timeout para no bloquear la respuesta
     let txHash = null;
