@@ -6,12 +6,14 @@ import { HttpClient } from '@angular/common/http';
 })
 export class ApiService {
 
-  private API_URL = 'http://localhost:3000/api';
+  private API_URL = 'https://eco-score-api-ytae.onrender.com/api';
 
   constructor(private http: HttpClient) {}
-getStats() {
-  return this.http.get('http://localhost:3000/api/stats');
-}
+
+  getStats() {
+    return this.http.get(`${this.API_URL}/stats`);
+  }
+
   evaluate(data: any) {
     return this.http.post(`${this.API_URL}/evaluate`, data);
   }
